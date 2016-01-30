@@ -17,9 +17,14 @@ public class UILogic : MonoBehaviour {
 
     [SerializeField]
     Text winnerMsg;
+
+    [SerializeField]
+    GameObject mainmenu;
+
     void Start()
     {
         winnerMsg.enabled = false;
+        mainmenu.SetActive( false);
     }
     void Update()
     {
@@ -36,7 +41,6 @@ public class UILogic : MonoBehaviour {
             score.text = Player.players[0].resources.ToString() + "/" + Player.players[1].resources.ToString();
         }
         
-
         if (ServerStateSynch.instance != null)
         {
             if(ServerStateSynch.instance.timeLeft <= 0.0f)
@@ -44,6 +48,7 @@ public class UILogic : MonoBehaviour {
                 if (winnerMsg.enabled == false)
                 {
                     winnerMsg.enabled = true;
+                    mainmenu.SetActive(true);
                     Player other = null;
                     for(int i=0; i< Player.players.Count; i++)
                     {
@@ -91,6 +96,10 @@ public class UILogic : MonoBehaviour {
     {
         Player.s_localPlayer.nextAction = Player.Action.Damage;
         
+    }
+    public void onMenu()
+    {
+        GGJNetworkManager.singleton.StopHost();
     }
 
     public void OnWall()
