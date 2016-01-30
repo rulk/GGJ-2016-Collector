@@ -29,6 +29,8 @@ public class Collector : NetworkBehaviour
 
     public const float stunDuration = 4.0f;
 
+    public const float withResourceSpeedMult = 0.8f;
+
     float stunRemaning = 0.0f;
 
     [SerializeField]
@@ -78,7 +80,7 @@ public class Collector : NetworkBehaviour
             resourceDistance = Vector3.Distance(transform.position, resource.transform.position);
         }
 
-        if (target != null )
+        if (target != null && draggedResource == null)
         {
             float targetPos = Vector3.Distance(transform.position, target.transform.position);
             if (targetPos < resourceDistance)
@@ -90,7 +92,7 @@ public class Collector : NetworkBehaviour
                 agent.SetDestination(resource.transform.position);
             }
         }
-        else if(resource != null )
+        else if(resource != null && draggedResource == null)
         {
             agent.SetDestination(resource.transform.position);
         }
@@ -114,8 +116,8 @@ public class Collector : NetworkBehaviour
 
         if(resource != null && resourceDistance < 1.5f)
         {
-            resource.follow(this);
-            draggedResource = resource;
+            if(resource.follow(this))
+                draggedResource = resource;
         }
 
         if(draggedResource != null)
@@ -134,10 +136,14 @@ public class Collector : NetworkBehaviour
                     GGJNetworkManager.players[playerNum].resources += 1;
                 }
             }
+            else
+            {
+                speed *= withResourceSpeedMult;
+            }
         }
 
         resource = null;
-        agent.speed = speed;
+        agent.speed =  speed;
         speed = maxSpeed;
     }
 

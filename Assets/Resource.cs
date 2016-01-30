@@ -22,7 +22,7 @@ public class Resource : NetworkBehaviour
         if (!isServer)
             return;
 
-        if (target == null && OnResourceOnTheGround != null)
+        if ( OnResourceOnTheGround != null)
         {
             OnResourceOnTheGround(this);
         }
@@ -33,8 +33,18 @@ public class Resource : NetworkBehaviour
         }
     }
 
-    public void follow(Collector collect)
+    public bool follow(Collector collect)
     {
-        target = collect;
+        if (collect == null)
+        {
+            target = collect;
+            return true;
+        }
+        if (target == null)
+        {
+            target = collect;
+            return true;
+        }
+        return false;
     }
 }
