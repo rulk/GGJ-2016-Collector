@@ -80,8 +80,13 @@ public class Player : NetworkBehaviour
 
             tillNextManna = oneMannaPerSec;
         }
-
+         
+        //if(Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended && !EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId) && nextAction != Action.None)
+#if !UNITY_EDITOR && (UNITY_ANDROID || UNITY_IOS) 
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began && !EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId) && nextAction != Action.None)
+#else
         if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && nextAction != Action.None)
+#endif
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             Vector3 target = ray.origin;
