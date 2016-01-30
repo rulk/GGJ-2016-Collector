@@ -23,12 +23,15 @@ public class Player : NetworkBehaviour
         if (pos == 0)
         {
             qant.eulerAngles = new Vector3(90.0f, 0.0f, 0.0f);
+           
         }
         else
         {
             qant.eulerAngles = new Vector3(90.0f, 180.0f, 0.0f);
-            Camera.main.transform.rotation = qant;
+           
         }
+
+        Camera.main.transform.rotation = qant;
     }
     // Use this for initialization
     void Start ()

@@ -4,12 +4,22 @@ using UnityEngine.Networking;
 
 public class POI : NetworkBehaviour
 {
+    public delegate void PoiIsActive( POI poi );
+
+    public static event PoiIsActive OnPoiIsActive;
+
     [SyncVar]
     public int playerNum;
     
 	// Use this for initialization
-	void Start () {
-	
+	public override void OnStartClient()
+    {
+      
+            if (playerNum == 0)
+                GetComponent<MeshRenderer>().material.color = Color.red;
+            else
+                GetComponent<MeshRenderer>().material.color = Color.blue;
+                    
 	}
 	
 	// Update is called once per frame
@@ -18,10 +28,8 @@ public class POI : NetworkBehaviour
         if (!isServer)
             return;
 
-        if (Collector.s_myCollector != null)
-        {
-            Collector.s_myCollector.addPOI(this);
-        }
+        if(OnPoiIsActive != null)
+            OnPoiIsActive(this);
 	
 	}
 }

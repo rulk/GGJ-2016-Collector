@@ -6,12 +6,14 @@ using UnityEngine.Networking;
 public class Collector : NetworkBehaviour
 {
 
-    static public Collector s_myCollector;
     POI target = null;
     float distanceToPOI;
 
     [SerializeField]
     Transform homeEmitter;
+
+    [SerializeField]
+    int playerNum;
 
     NavMeshAgent agent;
     // Use this for initialization
@@ -19,12 +21,21 @@ public class Collector : NetworkBehaviour
     {
         if (!isServer)
             return;
+
         agent = GetComponent<NavMeshAgent>();
-        s_myCollector = this;
-	}
-	
-	// Update is called once per frame
-	void LateUpdate ()
+        POI.OnPoiIsActive += addPOI;
+    }
+    
+    void OnDestroy()
+    {
+        if (!isServer)
+            return;
+
+        POI.OnPoiIsActive -= addPOI;
+    }
+
+    // Update is called once per frame
+    void LateUpdate ()
     {
         if (!isServer)
             return;
@@ -55,6 +66,9 @@ public class Collector : NetworkBehaviour
     public void addPOI(POI poi)
     {
         if (!isServer)
+            return;
+
+        if (poi.playerNum != playerNum)
             return;
 
         float dist = Vector3.Distance(poi.transform.position, transform.position);
