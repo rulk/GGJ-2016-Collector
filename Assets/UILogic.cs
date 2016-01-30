@@ -19,6 +19,11 @@ public class UILogic : MonoBehaviour {
         
     }
 
+    public void OnWall()
+    {
+        Player.s_localPlayer.nextAction = Player.Action.Wall;
+    }
+
     public void onCP()
     {
         Player.s_localPlayer.nextAction = Player.Action.CP;

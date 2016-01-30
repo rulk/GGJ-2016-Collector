@@ -10,7 +10,9 @@ public class POI : NetworkBehaviour
 
     [SyncVar]
     public int playerNum;
-    
+
+    public float timeToLive;
+
 	// Use this for initialization
 	public override void OnStartClient()
     {
@@ -30,6 +32,12 @@ public class POI : NetworkBehaviour
 
         if(OnPoiIsActive != null)
             OnPoiIsActive(this);
-	
+
+        timeToLive -= Time.deltaTime;
+
+        if (timeToLive < 0.0f)
+        {
+            Destroy(gameObject);
+        }
 	}
 }

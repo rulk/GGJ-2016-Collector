@@ -34,6 +34,9 @@ public class Player : NetworkBehaviour
     [SerializeField]
     public GameObject AoEPrefab;
 
+    [SerializeField]
+    public GameObject obstacle;
+
     public override void OnStartLocalPlayer()
     {
         Quaternion qant = new Quaternion();
@@ -45,7 +48,9 @@ public class Player : NetworkBehaviour
         else
         {
             qant.eulerAngles = new Vector3(90.0f, 180.0f, 0.0f);
-           
+            Vector3 ppos = Camera.main.transform.position;
+            ppos.z *= -1;
+            Camera.main.transform.position = ppos;
         }
         s_localPlayer = this;
         Camera.main.transform.rotation = qant;
@@ -78,7 +83,10 @@ public class Player : NetworkBehaviour
                     CmdAoE(target, 1.15f, 2.0f,5.0f, 2.0f);
                     break;
                 case Action.CP:
-                    CmdspanPOI(target, pos);
+                    CmdspanPOI(target, pos, 2.0f);
+                    break;
+                case Action.Wall:
+                    CmdspanWall(target,8.0f);
                     break;
             }
 
@@ -100,12 +108,23 @@ public class Player : NetworkBehaviour
     }
 
     [Command]
-    void CmdspanPOI(Vector3 position, int playerNum)
+    void CmdspanPOI(Vector3 position, int playerNum, float ttl)
     {
         Quaternion qat = new Quaternion();
         qat.eulerAngles = new Vector3(90.0f, 0.0f, 0.0f);
         GameObject go = (GameObject)Instantiate(POIPrefab,position,qat);
         go.GetComponent<POI>().playerNum = playerNum;
+        go.GetComponent<POI>().timeToLive = ttl;
+        NetworkServer.Spawn(go);
+    }
+
+    [Command]
+    void CmdspanWall(Vector3 position, float ttl)
+    {
+        Quaternion qat = new Quaternion();
+        qat.eulerAngles = new Vector3(90.0f, 0.0f, 0.0f);
+        GameObject go = (GameObject)Instantiate(obstacle, position, qat);
+        go.GetComponent<Wall>().ttl = ttl;
         NetworkServer.Spawn(go);
     }
 }
