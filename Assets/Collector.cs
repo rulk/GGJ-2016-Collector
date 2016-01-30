@@ -25,9 +25,9 @@ public class Collector : NetworkBehaviour
     [SyncVar]
     public float hp;
     
-    public const float maxHp = 10.0f;
+    public const float maxHp = 50.0f;
 
-    public const float stunDuration = 3.0f;
+    public const float stunDuration = 4.0f;
 
     float stunRemaning = 0.0f;
 

@@ -8,7 +8,7 @@ public class Player : NetworkBehaviour
 {
 
     public static Player s_localPlayer = null;
-    public const float oneMannaPerSec = 0.5f;
+    public const float oneMannaPerSec = 0.25f;
     float tillNextManna;
     public const int maxManna = 50;
     public enum Action
@@ -21,7 +21,7 @@ public class Player : NetworkBehaviour
         CP
     }
 
-    public static int[] mannaCost = new int[] { 0, 20, 15, 15, 5, 5};
+    public static int[] mannaCost = new int[] { 0, 20, 15, 25, 30, 5};
 
     public Action nextAction;
 
@@ -113,19 +113,19 @@ public class Player : NetworkBehaviour
                 case Action.None:
                     break;
                 case Action.Slow:                   
-                    CmdAoE(target, 0.75f, 2.0f,5.0f,2.0f,0.0f, 0);
+                    CmdAoE(target, 0.33f, 3.5f,5.0f,2.5f,0.0f,0);
                     break;
                 case Action.Haste:                   
-                    CmdAoE(target, 1.15f, 2.0f,5.0f, 2.0f, 0.0f, 1);
+                    CmdAoE(target, 1.50f, 2.0f,4.0f, 1.5f, 0.0f,1);
                     break;
                 case Action.Damage:                    
-                    CmdAoE(target, 1.0f, 2.0f, 5.0f, 2.0f, 1.0f, 2);
+                    CmdAoE(target, 1.0f, 3.5f, 4.0f, 2.0f, 20.0f,2);
                     break;
                 case Action.CP:                   
-                    CmdspanPOI(target, pos, 2.0f);
+                    CmdspanPOI(target, pos, 4.0f);
                     break;
                 case Action.Wall:
-                    CmdspanWall(target,8.0f);
+                    CmdspanWall(target,6.0f);
                     break;
             }
 
