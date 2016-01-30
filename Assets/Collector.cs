@@ -12,6 +12,10 @@ public class Collector : NetworkBehaviour
     Resource resource;
     Resource draggedResource;
 
+    float maxSpeed;
+
+    float speed;
+
     [SerializeField]
     Transform homeEmitter;
 
@@ -28,8 +32,9 @@ public class Collector : NetworkBehaviour
     {
         if (!isServer)
             return;
-
+        
         agent = GetComponent<NavMeshAgent>();
+        maxSpeed = agent.speed;
         POI.OnPoiIsActive += addPOI;
         Resource.OnResourceOnTheGround += resourceOnTheGround;
     }
@@ -105,11 +110,16 @@ public class Collector : NetworkBehaviour
                 GameObject go = (GameObject)Instantiate(resourcePrefab, Vector2.zero, Quaternion.identity);
                 NetworkServer.Spawn(go);
 
-                GGJNetworkManager.players[playerNum].resources += 1;
+                if (GGJNetworkManager.players[playerNum] != null)
+                {
+                    GGJNetworkManager.players[playerNum].resources += 1;
+                }
             }
         }
 
         resource = null;
+        agent.speed = speed;
+        speed = maxSpeed;
     }
 
     public void addPOI(POI poi)
@@ -139,5 +149,10 @@ public class Collector : NetworkBehaviour
     public void resourceOnTheGround(Resource res)
     {
         resource = res;
+    }
+
+    public void ApplySpeedChange(float mult)
+    {
+        speed *= mult;
     }
 }

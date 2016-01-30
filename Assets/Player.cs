@@ -1,10 +1,24 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.Networking;
+using UnityEngine.EventSystems;
 
 public class Player : NetworkBehaviour
 {
- 
+
+    public static Player s_localPlayer = null;
+    public enum Action
+    {
+        None=0,
+        Slow,
+        Haste,
+        Damage,
+        Wall,
+        CP
+    }
+
+    public Action nextAction;
+
     [SyncVar]
     public int pos;
 
@@ -16,6 +30,9 @@ public class Player : NetworkBehaviour
 
     [SerializeField]
     public GameObject POIPrefab;
+
+    [SerializeField]
+    public GameObject AoEPrefab;
 
     public override void OnStartLocalPlayer()
     {
@@ -30,7 +47,7 @@ public class Player : NetworkBehaviour
             qant.eulerAngles = new Vector3(90.0f, 180.0f, 0.0f);
            
         }
-
+        s_localPlayer = this;
         Camera.main.transform.rotation = qant;
     }
     // Use this for initialization
@@ -45,14 +62,39 @@ public class Player : NetworkBehaviour
         if (!isLocalPlayer)
             return;
 
-        if (Input.GetMouseButtonUp(0))
+        if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && nextAction != Action.None)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             Vector3 target = ray.origin;
             target.y = 1.0f;
-            CmdspanPOI(target, pos);
+            switch(nextAction)
+            {
+                case Action.None:
+                    break;
+                case Action.Slow:
+                    CmdAoE(target, 0.75f, 2.0f);
+                    break;
+                case Action.Haste:
+                    CmdAoE(target, 1.15f, 2.0f);
+                    break;
+                case Action.CP:
+                    CmdspanPOI(target, pos);
+                    break;
+            }
+
+            nextAction = Action.None;
         }
 	}
+
+    [Command]
+    void CmdAoE(Vector3 target, float speedRate, float duration)
+    {
+        target.y = -0.42f;
+        GameObject go = (GameObject)Instantiate(AoEPrefab, target, Quaternion.identity);
+        go.GetComponent<AoELogic>().speedMult = speedRate;
+        go.GetComponent<AoELogic>().duration = duration;
+        NetworkServer.Spawn(go);
+    }
 
     [Command]
     void CmdspanPOI(Vector3 position, int playerNum)
