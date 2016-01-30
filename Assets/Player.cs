@@ -93,19 +93,18 @@ public class Player : NetworkBehaviour
                 case Action.None:
                     break;
                 case Action.Slow:                   
-                    CmdAoE(target, 0.75f, 2.0f,5.0f,2.0f,0.0f,0);
+                    CmdAoE(target, 0.75f, 2.0f,5.0f,2.0f,0.0f, 0);
                     break;
                 case Action.Haste:                   
-                    CmdAoE(target, 1.15f, 2.0f,5.0f, 2.0f, 0.0f,1);
+                    CmdAoE(target, 1.15f, 2.0f,5.0f, 2.0f, 0.0f, 1);
                     break;
                 case Action.Damage:                    
-                    CmdAoE(target, 1.0f, 2.0f, 5.0f, 2.0f, 1.0f,2);
+                    CmdAoE(target, 1.0f, 2.0f, 5.0f, 2.0f, 1.0f, 2);
                     break;
                 case Action.CP:                   
                     CmdspanPOI(target, pos, 2.0f);
                     break;
                 case Action.Wall:
-                    
                     CmdspanWall(target,8.0f);
                     break;
             }
