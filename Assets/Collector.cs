@@ -9,11 +9,18 @@ public class Collector : NetworkBehaviour
     POI target = null;
     float distanceToPOI;
 
+    Resource resource;
+    Resource draggedResource;
+
     [SerializeField]
     Transform homeEmitter;
 
     [SerializeField]
     int playerNum;
+
+
+    [SerializeField]
+    GameObject resourcePrefab;
 
     NavMeshAgent agent;
     // Use this for initialization
@@ -24,6 +31,7 @@ public class Collector : NetworkBehaviour
 
         agent = GetComponent<NavMeshAgent>();
         POI.OnPoiIsActive += addPOI;
+        Resource.OnResourceOnTheGround += resourceOnTheGround;
     }
     
     void OnDestroy()
@@ -39,29 +47,70 @@ public class Collector : NetworkBehaviour
     {
         if (!isServer)
             return;
+        float resourceDistance = float.MaxValue;
 
-        if (target != null )
+        if (resource != null)
         {
-            agent.SetDestination(target.transform.position);
-            if (!agent.pathPending)
+            resourceDistance = Vector3.Distance(transform.position, resource.transform.position);
+        }
+
+        if (target != null && draggedResource == null)
+        {
+            float targetPos = Vector3.Distance(transform.position, target.transform.position);
+            if (targetPos < resourceDistance)
             {
-                float dist = Vector3.Distance(transform.position, target.transform.position);
-                if (dist <= 1.5f)
-                {
-                    if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
-                    {
-                        Destroy(target.gameObject);
-                        target = null;
-                    }
-                }
+                agent.SetDestination(target.transform.position);
             }
+            else
+            {
+                agent.SetDestination(resource.transform.position);
+            }
+        }
+        else if(resource != null && draggedResource == null)
+        {
+            agent.SetDestination(resource.transform.position);
         }
         else
         {
             agent.SetDestination(homeEmitter.position);
-
         }
-	}
+
+        if (target != null)
+        {
+            float dist = Vector3.Distance(transform.position, target.transform.position);
+            if (dist <= 1.5f)
+            {
+                if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
+                {
+                    Destroy(target.gameObject);
+                    target = null;
+                }
+            }
+        }
+
+        if(resource != null && resourceDistance < 1.5f)
+        {
+            resource.follow(this);
+            draggedResource = resource;
+        }
+
+        if(draggedResource != null)
+        {
+            float homeDistance = Vector3.Distance(homeEmitter.transform.position, transform.position);
+            if(homeDistance < 1.5f)
+            {
+                Destroy(draggedResource.gameObject);
+                draggedResource = null;
+
+                GameObject go = (GameObject)Instantiate(resourcePrefab, Vector2.zero, Quaternion.identity);
+                NetworkServer.Spawn(go);
+
+                GGJNetworkManager.players[playerNum].resources += 1;
+            }
+        }
+
+        resource = null;
+    }
 
     public void addPOI(POI poi)
     {
@@ -85,5 +134,10 @@ public class Collector : NetworkBehaviour
                 distanceToPOI = dist;
             }
         }
+    }
+
+    public void resourceOnTheGround(Resource res)
+    {
+        resource = res;
     }
 }
