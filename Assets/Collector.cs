@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Networking;
 
-public class Collector : MonoBehaviour {
+public class Collector : NetworkBehaviour
+{
 
     static public Collector s_myCollector;
     POI target = null;
@@ -15,6 +17,8 @@ public class Collector : MonoBehaviour {
     // Use this for initialization
 	void Start ()
     {
+        if (!isServer)
+            return;
         agent = GetComponent<NavMeshAgent>();
         s_myCollector = this;
 	}
@@ -22,7 +26,10 @@ public class Collector : MonoBehaviour {
 	// Update is called once per frame
 	void LateUpdate ()
     {
-	    if(target != null )
+        if (!isServer)
+            return;
+
+        if (target != null )
         {
             agent.SetDestination(target.transform.position);
             if (!agent.pathPending)
@@ -47,6 +54,9 @@ public class Collector : MonoBehaviour {
 
     public void addPOI(POI poi)
     {
+        if (!isServer)
+            return;
+
         float dist = Vector3.Distance(poi.transform.position, transform.position);
         if (target == null)
         {
