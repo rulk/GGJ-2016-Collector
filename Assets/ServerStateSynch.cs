@@ -6,13 +6,15 @@ public class ServerStateSynch : NetworkBehaviour
     [SyncVar]
     public float timeLeft;
 
-    const float totalTime = 3.0f*60;
+    public const float totalTime = 3.0f*60;
 
     public static ServerStateSynch instance;
 
     void Awake()
     {
         instance = this;
+        if (isServer)
+            timeLeft = totalTime;
     }
 
     [Server]

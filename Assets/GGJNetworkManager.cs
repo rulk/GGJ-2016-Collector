@@ -21,6 +21,11 @@ public class GGJNetworkManager : NetworkManager
             players.Add(player.GetComponent<Player>());           
             NetworkServer.AddPlayerForConnection(conn, player, playerControllerId);
         }
+
+        if(numPlayers == 1)
+        {
+            ServerStateSynch.instance.timeLeft = ServerStateSynch.totalTime;
+        }
     }
 
 }
