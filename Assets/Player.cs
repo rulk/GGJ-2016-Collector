@@ -72,27 +72,30 @@ public class Player : NetworkBehaviour
                 case Action.None:
                     break;
                 case Action.Slow:
-                    CmdAoE(target, 0.75f, 2.0f);
+                    CmdAoE(target, 0.75f, 2.0f,5.0f,2.0f);
                     break;
                 case Action.Haste:
-                    CmdAoE(target, 1.15f, 2.0f);
+                    CmdAoE(target, 1.15f, 2.0f,5.0f, 2.0f);
                     break;
                 case Action.CP:
                     CmdspanPOI(target, pos);
                     break;
             }
 
-            nextAction = Action.None;
+            //nextAction = Action.None;
         }
 	}
 
     [Command]
-    void CmdAoE(Vector3 target, float speedRate, float duration)
+    void CmdAoE(Vector3 target, float speedRate, float duration, float diameter, float delay)
     {
         target.y = -0.42f;
         GameObject go = (GameObject)Instantiate(AoEPrefab, target, Quaternion.identity);
         go.GetComponent<AoELogic>().speedMult = speedRate;
         go.GetComponent<AoELogic>().duration = duration;
+        go.GetComponent<AoELogic>().delay = delay;
+        go.GetComponent<AoELogic>().active = false;
+        go.transform.localScale = new Vector3(diameter, 0.5f, diameter);
         NetworkServer.Spawn(go);
     }
 
