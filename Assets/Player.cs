@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.Networking;
 using UnityEngine.EventSystems;
 
@@ -59,6 +60,20 @@ public class Player : NetworkBehaviour
         }
         s_localPlayer = this;
         Camera.main.transform.rotation = qant;
+    }
+
+    static public List<Player> players = new List<Player>();
+
+    void Awake()
+    {
+        players.Add(this);
+    }
+
+    void OnDestroy()
+    {
+        players.Remove(this);
+        GGJNetworkManager.players.Remove(this);
+        Debug.Log("Player Destroyed!");
     }
     // Use this for initialization
     void Start ()

@@ -62,8 +62,11 @@ public class Collector : NetworkBehaviour
         if (!isServer)
             return;
         float resourceDistance = float.MaxValue;
-
-        if (stunRemaning > 0.0f)
+#if UNITY_EDITOR
+        if (stunRemaning > 0.0f )
+#else
+        if (stunRemaning > 0.0f || GGJNetworkManager.players.Count != 2)
+#endif
         {
             stunRemaning -= Time.deltaTime;
             agent.ResetPath();

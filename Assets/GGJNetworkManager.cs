@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.Networking;
 
 public class GGJNetworkManager : NetworkManager
 {
 
-    static public Player[] players = new Player[2];
+    static public List<Player> players = new List<Player>();
+
+    const float totalTime = 3.0f;
+   
 
     public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
     {
@@ -14,8 +18,9 @@ public class GGJNetworkManager : NetworkManager
             var player = (GameObject)GameObject.Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
             player.GetComponent<Player>().pos = numPlayers;
             player.GetComponent<Player>().manna = Player.maxManna;
-            players[player.GetComponent<Player>().pos] = player.GetComponent<Player>();
+            players.Add(player.GetComponent<Player>());           
             NetworkServer.AddPlayerForConnection(conn, player, playerControllerId);
         }
     }
+
 }
