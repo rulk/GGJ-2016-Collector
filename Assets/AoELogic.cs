@@ -11,6 +11,11 @@ public class AoELogic : NetworkBehaviour
 
     public float delay;
 
+    public float hpPerSec;
+
+    [SyncVar]
+    public int color;
+
     [SyncVar]
     public bool active;
 
@@ -25,6 +30,7 @@ public class AoELogic : NetworkBehaviour
         if (collector != null)
         {
             collector.ApplySpeedChange(speedMult);
+            collector.ApplyDammage(Time.fixedDeltaTime * hpPerSec);
         }
     }
 
@@ -34,14 +40,25 @@ public class AoELogic : NetworkBehaviour
     {
         if( firstUpdate)
         {
-            GetComponent<MeshRenderer>().material.color = new Color(0.0f, 0.2f, 0.0f, 0.2f);
+           switch(color)
+            {
+                case 0: GetComponent<MeshRenderer>().material.color = new Color(0.0f, 0.2f, 0.0f, 0.2f);break;
+                case 1: GetComponent<MeshRenderer>().material.color = new Color(0.0f, 0.0f, 0.2f, 0.2f); break;
+                case 2: GetComponent<MeshRenderer>().material.color = new Color(0.2f, 0.0f, 0.0f, 0.2f); break;
+            }
+                
             firstUpdate = false;
 
         }
         if( proxyActive == false && active == true)
         {
             proxyActive = true;
-            GetComponent<MeshRenderer>().material.color = new Color(0.0f, 1.0f, 0.0f, 1.0f);
+            switch (color)
+            {
+                case 0: GetComponent<MeshRenderer>().material.color = new Color(0.0f, 1f, 0.0f, 0.2f); break;
+                case 1: GetComponent<MeshRenderer>().material.color = new Color(0.0f, 0.0f, 1f, 0.2f); break;
+                case 2: GetComponent<MeshRenderer>().material.color = new Color(1f, 0.0f, 0.0f, 0.2f); break;
+            }
         }
 
         if (!isServer)

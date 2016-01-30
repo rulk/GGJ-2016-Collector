@@ -22,6 +22,14 @@ public class Collector : NetworkBehaviour
     [SerializeField]
     int playerNum;
 
+    [SyncVar]
+    public float hp;
+    
+    public const float maxHp = 10.0f;
+
+    public const float stunDuration = 3.0f;
+
+    float stunRemaning = 0.0f;
 
     [SerializeField]
     GameObject resourcePrefab;
@@ -32,7 +40,8 @@ public class Collector : NetworkBehaviour
     {
         if (!isServer)
             return;
-        
+
+        hp = maxHp;
         agent = GetComponent<NavMeshAgent>();
         maxSpeed = agent.speed;
         POI.OnPoiIsActive += addPOI;
@@ -53,6 +62,13 @@ public class Collector : NetworkBehaviour
         if (!isServer)
             return;
         float resourceDistance = float.MaxValue;
+
+        if (stunRemaning > 0.0f)
+        {
+            stunRemaning -= Time.deltaTime;
+            agent.ResetPath();
+            return;
+        }
 
         if (resource != null)
         {
@@ -154,5 +170,20 @@ public class Collector : NetworkBehaviour
     public void ApplySpeedChange(float mult)
     {
         speed *= mult;
+    }
+
+    public void ApplyDammage(float dmg)
+    {
+        hp -= dmg; 
+        if(hp < 0)
+        {
+            stunRemaning = stunDuration;
+            hp = maxHp;
+            if (draggedResource != null)
+            {
+                draggedResource.follow(null);
+                draggedResource = null;
+            }
+        }
     }
 }

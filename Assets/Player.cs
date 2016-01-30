@@ -7,6 +7,9 @@ public class Player : NetworkBehaviour
 {
 
     public static Player s_localPlayer = null;
+    public const float oneMannaPerSec = 0.5f;
+    float tillNextManna;
+    public const int maxManna = 50;
     public enum Action
     {
         None=0,
@@ -16,6 +19,8 @@ public class Player : NetworkBehaviour
         Wall,
         CP
     }
+
+    public static int[] mannaCost = new int[] { 0, 20, 15, 15, 5, 5};
 
     public Action nextAction;
 
@@ -63,29 +68,44 @@ public class Player : NetworkBehaviour
 	
 	// Update is called once per frame
 	void Update ()
-    {
+    {       
         if (!isLocalPlayer)
             return;
+
+        tillNextManna -= Time.deltaTime;
+        if (tillNextManna < 0.0f)
+        {
+            if (manna < maxManna)
+                manna += 1;
+
+            tillNextManna = oneMannaPerSec;
+        }
 
         if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && nextAction != Action.None)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             Vector3 target = ray.origin;
             target.y = 1.0f;
-            switch(nextAction)
+            if (mannaCost[(int)nextAction] > manna) return;
+            manna -= mannaCost[(int)nextAction];
+            switch (nextAction)
             {
                 case Action.None:
                     break;
-                case Action.Slow:
-                    CmdAoE(target, 0.75f, 2.0f,5.0f,2.0f);
+                case Action.Slow:                   
+                    CmdAoE(target, 0.75f, 2.0f,5.0f,2.0f,0.0f,0);
                     break;
-                case Action.Haste:
-                    CmdAoE(target, 1.15f, 2.0f,5.0f, 2.0f);
+                case Action.Haste:                   
+                    CmdAoE(target, 1.15f, 2.0f,5.0f, 2.0f, 0.0f,1);
                     break;
-                case Action.CP:
+                case Action.Damage:                    
+                    CmdAoE(target, 1.0f, 2.0f, 5.0f, 2.0f, 1.0f,2);
+                    break;
+                case Action.CP:                   
                     CmdspanPOI(target, pos, 2.0f);
                     break;
                 case Action.Wall:
+                    
                     CmdspanWall(target,8.0f);
                     break;
             }
@@ -95,7 +115,7 @@ public class Player : NetworkBehaviour
 	}
 
     [Command]
-    void CmdAoE(Vector3 target, float speedRate, float duration, float diameter, float delay)
+    void CmdAoE(Vector3 target, float speedRate, float duration, float diameter, float delay, float hpPerSec, int color)
     {
         target.y = -0.42f;
         GameObject go = (GameObject)Instantiate(AoEPrefab, target, Quaternion.identity);
@@ -103,7 +123,9 @@ public class Player : NetworkBehaviour
         go.GetComponent<AoELogic>().duration = duration;
         go.GetComponent<AoELogic>().delay = delay;
         go.GetComponent<AoELogic>().active = false;
-        go.transform.localScale = new Vector3(diameter, 0.5f, diameter);
+        go.GetComponent<AoELogic>().hpPerSec = hpPerSec;
+        go.GetComponent<AoELogic>().color = color;
+       go.transform.localScale = new Vector3(diameter, 0.5f, diameter);
         NetworkServer.Spawn(go);
     }
 

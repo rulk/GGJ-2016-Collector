@@ -13,6 +13,7 @@ public class GGJNetworkManager : NetworkManager
         {
             var player = (GameObject)GameObject.Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
             player.GetComponent<Player>().pos = numPlayers;
+            player.GetComponent<Player>().manna = Player.maxManna;
             players[player.GetComponent<Player>().pos] = player.GetComponent<Player>();
             NetworkServer.AddPlayerForConnection(conn, player, playerControllerId);
         }
