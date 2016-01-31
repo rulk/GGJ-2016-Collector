@@ -75,9 +75,9 @@ public class AoELogic : NetworkBehaviour
         {
            switch(color)
             {
-                case 0: GetComponent<MeshRenderer>().material.color = new Color(0.0f, 0.2f, 0.0f, 0.2f);break;
-                case 1: GetComponent<MeshRenderer>().material.color = new Color(0.0f, 0.0f, 0.2f, 0.2f); break;
-                case 2: GetComponent<MeshRenderer>().material.color = new Color(0.2f, 0.0f, 0.0f, 0.2f); break;
+                case 0: GetComponentInChildren<MeshRenderer>().material.SetColor("_TintColor", new Color(0.0f, 0.0f, 0.2f, 0.2f));break;
+                case 1: GetComponentInChildren<MeshRenderer>().material.SetColor("_TintColor", new Color(0.2f, 0.0f, 0.0f, 0.2f)); break;
+                case 2: GetComponentInChildren<MeshRenderer>().material.SetColor("_TintColor", new Color(0.2f, 0.0f, 0.2f, 0.2f)); break;
             }
                 
             firstUpdate = false;
@@ -88,9 +88,9 @@ public class AoELogic : NetworkBehaviour
             proxyActive = true;
             switch (color)
             {
-                case 0: GetComponent<MeshRenderer>().material.color = new Color(0.0f, 1f, 0.0f, 0.2f); break;
-                case 1: GetComponent<MeshRenderer>().material.color = new Color(0.0f, 0.0f, 1f, 0.2f); break;
-                case 2: GetComponent<MeshRenderer>().material.color = new Color(1f, 0.0f, 0.0f, 0.2f); break;
+                case 0: GetComponentInChildren<MeshRenderer>().material.SetColor("_TintColor" ,new Color(0.0f, 0f, 1f, 0.2f)); break;
+                case 1: GetComponentInChildren<MeshRenderer>().material.SetColor("_TintColor", new Color(1f, 0.0f, 0f, 0.2f)); break;
+                case 2: GetComponentInChildren<MeshRenderer>().material.SetColor("_TintColor", new Color(1f, 0.0f, 1f, 0.2f)); break;
             }
         }
 
