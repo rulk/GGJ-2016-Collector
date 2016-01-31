@@ -80,14 +80,14 @@ public class Collector : NetworkBehaviour
             resourceDistance = Vector3.Distance(transform.position, resource.transform.position);
         }
 
-        if (target != null && draggedResource == null)
+        if (target != null)
         {
             float targetPos = Vector3.Distance(transform.position, target.transform.position);
-            if (targetPos < resourceDistance)
+            if (targetPos < resourceDistance || draggedResource != null)
             {
                 agent.SetDestination(target.transform.position);
             }
-            else
+            else if(draggedResource == null)
             {
                 agent.SetDestination(resource.transform.position);
             }
