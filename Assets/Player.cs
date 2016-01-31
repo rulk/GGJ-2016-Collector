@@ -10,7 +10,7 @@ public class Player : NetworkBehaviour
     public static Player s_localPlayer = null;
     public const float oneMannaPerSec = 0.25f;
     float tillNextManna;
-    public const int maxManna = 50;
+    public const int maxManna = 60;
     public enum Action
     {
         None=0,
@@ -116,7 +116,7 @@ public class Player : NetworkBehaviour
                     CmdAoE(target, 0.33f, 3.5f,6.0f,2.5f,0.0f,0,0.0f);
                     break;
                 case Action.Explode:                   
-                    CmdAoE(target, 1.0f, 2.0f, 8.0f, 0.5f, 20.0f,1,1.0f);
+                    CmdAoE(target, 1.0f, 2.0f, 9.0f, 0.5f, 25.0f,1,2.5f);
                     break;
                 case Action.Damage:                    
                     CmdAoE(target, 1.0f, 3.5f, 4.0f, 2.0f, 20.0f,2,0.0f);
