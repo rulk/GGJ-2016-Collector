@@ -15,7 +15,7 @@ public class Player : NetworkBehaviour
     {
         None=0,
         Slow,
-        Haste,
+        Explode,
         Damage,
         Wall,
         CP
@@ -113,13 +113,13 @@ public class Player : NetworkBehaviour
                 case Action.None:
                     break;
                 case Action.Slow:                   
-                    CmdAoE(target, 0.33f, 3.5f,6.0f,2.5f,0.0f,0);
+                    CmdAoE(target, 0.33f, 3.5f,6.0f,2.5f,0.0f,0,0.0f);
                     break;
-                case Action.Haste:                   
-                    CmdAoE(target, 1.60f, 2.0f,5.0f, 1.5f, 0.0f,1);
+                case Action.Explode:                   
+                    CmdAoE(target, 1.0f, 2.0f, 8.0f, 0.5f, 20.0f,1,1.0f);
                     break;
                 case Action.Damage:                    
-                    CmdAoE(target, 1.0f, 3.5f, 4.0f, 2.0f, 20.0f,2);
+                    CmdAoE(target, 1.0f, 3.5f, 4.0f, 2.0f, 20.0f,2,0.0f);
                     break;
                 case Action.CP:                   
                     CmdspanPOI(target, pos, 5.0f);
@@ -134,7 +134,7 @@ public class Player : NetworkBehaviour
 	}
 
     [Command]
-    void CmdAoE(Vector3 target, float speedRate, float duration, float diameter, float delay, float hpPerSec, int color)
+    void CmdAoE(Vector3 target, float speedRate, float duration, float diameter, float delay, float hpPerSec, int color, float explosionForce)
     {
         target.y = -0.42f;
         GameObject go = (GameObject)Instantiate(AoEPrefab, target, Quaternion.identity);
@@ -144,7 +144,8 @@ public class Player : NetworkBehaviour
         go.GetComponent<AoELogic>().active = false;
         go.GetComponent<AoELogic>().hpPerSec = hpPerSec;
         go.GetComponent<AoELogic>().color = color;
-       go.transform.localScale = new Vector3(diameter, 0.5f, diameter);
+        go.GetComponent<AoELogic>().explodingForce = explosionForce;
+        go.transform.localScale = new Vector3(diameter, 0.5f, diameter);
         NetworkServer.Spawn(go);
     }
 

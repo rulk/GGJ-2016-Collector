@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.Networking;
 public class AoELogic : NetworkBehaviour
 {
+    public const float explosionDuration = 1.0f;
     //[SyncVar]
     public float speedMult;
 
@@ -19,6 +20,10 @@ public class AoELogic : NetworkBehaviour
     [SyncVar]
     public bool active;
 
+    public float explodingForce = 0.0f;
+
+    bool haveExploded = false;
+
     void OnTriggerStay(Collider collider)
     {
         if (!isServer)
@@ -32,10 +37,38 @@ public class AoELogic : NetworkBehaviour
             collector.ApplySpeedChange(speedMult);
             collector.ApplyDammage(Time.fixedDeltaTime * hpPerSec);
         }
+
+        if(explodingForce > 0.001f)
+        {
+            var rigidBody = collider.GetComponent<Rigidbody>();
+            if (rigidBody != null)
+            {
+                Vector3 force = collider.transform.position - transform.position;
+                force.y = 0.0f;
+               
+                if(collector != null)
+                {
+                    collector.affectByExplosion(explosionDuration);
+                }
+                else
+                {
+                    var resource = collider.GetComponent<Resource>();
+                    if(resource != null)
+                    {
+                        resource.affectByExplosion(explosionDuration);
+                    }
+                }
+
+                rigidBody.AddForce(force * explodingForce, ForceMode.Impulse);
+                haveExploded = true;
+            }
+
+        }
     }
 
     bool proxyActive = false;
     bool firstUpdate = true;
+    
     void Update()
     {
         if( firstUpdate)
@@ -67,7 +100,7 @@ public class AoELogic : NetworkBehaviour
         if (delay < 0.0f)
         {
             duration -= Time.deltaTime;
-            if (duration < 0)
+            if (duration < 0 || (explodingForce > 0.01f && haveExploded == true))
             {
                 Destroy(gameObject);
             }

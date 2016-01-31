@@ -9,12 +9,29 @@ public class Resource : NetworkBehaviour
     public static event ResourceOnTheGround OnResourceOnTheGround;
 
     NavMeshAgent agent;
+    Rigidbody rigidBody;
 
     Collector target;
 
+    float tillExplosionEnd = 0.0f;
+
+    public void affectByExplosion(float duration)
+    {
+        tillExplosionEnd = duration;
+        rigidBody.isKinematic = false;
+        agent.enabled = false;
+    }
+
     void Start()
     {
+        tillExplosionEnd = 0.0f;
         agent = GetComponent<NavMeshAgent>();
+        rigidBody = GetComponent<Rigidbody>();
+        rigidBody.isKinematic = true;
+        agent.enabled = false;
+        if (!isServer)
+            return;
+        agent.enabled = true;
     }
 
     void Update()
@@ -22,12 +39,22 @@ public class Resource : NetworkBehaviour
         if (!isServer)
             return;
 
+        if (tillExplosionEnd > 0.0f && rigidBody.isKinematic == false)
+        {
+            tillExplosionEnd -= Time.deltaTime;
+            if (tillExplosionEnd <= 0.0f)
+            {
+                rigidBody.isKinematic = true;
+                agent.enabled = true;
+            }
+        }
+
         if ( OnResourceOnTheGround != null)
         {
             OnResourceOnTheGround(this);
         }
 
-        if(target != null)
+        if(target != null && agent.enabled == true)
         {
             agent.SetDestination(target.transform.position);
         }

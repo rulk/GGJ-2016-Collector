@@ -87,9 +87,9 @@ public class UILogic : MonoBehaviour {
         Player.s_localPlayer.nextAction = Player.Action.Slow;
     }
      
-    public void onHaste()
+    public void onExplode()
     {
-        Player.s_localPlayer.nextAction = Player.Action.Haste;
+        Player.s_localPlayer.nextAction = Player.Action.Explode;
     }
 
     public void onDamage()
