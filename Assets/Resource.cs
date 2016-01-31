@@ -74,4 +74,8 @@ public class Resource : NetworkBehaviour
         }
         return false;
     }
+    public Collector getTarget()
+    {
+        return target;
+    }
 }

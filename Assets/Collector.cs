@@ -105,7 +105,7 @@ public class Collector : NetworkBehaviour
             if (target != null)
             {
                 float targetPos = Vector3.Distance(transform.position, target.transform.position);
-                if (targetPos < resourceDistance || draggedResource != null)
+                if (targetPos < resourceDistance || draggedResource != null || (resource != null && resource.getTarget() != this))
                 {
                     agent.SetDestination(target.transform.position);
                 }
