@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.Networking.Match;
+
 public class MainMenuLogic : MonoBehaviour {
 
 
@@ -52,4 +54,23 @@ public class MainMenuLogic : MonoBehaviour {
 	void Update () {
 	
 	}
+    
+    public void StartOnlineMatch()
+    {
+        GGJNetworkManager.singleton.StartMatchMaker();
+        GGJNetworkManager.singleton.matchMaker.ListMatches(0, 20, "", OnMatchList);
+    }
+
+    public void OnMatchList(ListMatchResponse matchListResponse)
+    {
+        if (matchListResponse.success && matchListResponse.matches != null && matchListResponse.matches.Count > 0)
+        {
+            GGJNetworkManager.singleton.matchMaker.JoinMatch(matchListResponse.matches[0].networkId, "", GGJNetworkManager.singleton.OnMatchJoined);
+        }
+        else
+        {
+            var manager = GGJNetworkManager.singleton;
+            GGJNetworkManager.singleton.matchMaker.CreateMatch(manager.matchName, manager.matchSize, true, "", GGJNetworkManager.singleton.OnMatchCreate);
+        }
+    }
 }
