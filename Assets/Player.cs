@@ -45,21 +45,21 @@ public class Player : NetworkBehaviour
 
     public override void OnStartLocalPlayer()
     {
-        Quaternion qant = new Quaternion();
+       // Quaternion qant = new Quaternion();
         if (pos == 0)
         {
-            qant.eulerAngles = new Vector3(90.0f, 0.0f, 0.0f);
+            //qant.eulerAngles = new Vector3(90.0f, 0.0f, 0.0f);
            
         }
         else
         {
-            qant.eulerAngles = new Vector3(90.0f, 180.0f, 0.0f);
-            Vector3 ppos = Camera.main.transform.position;
-            ppos.z *= -1;
-            Camera.main.transform.position = ppos;
+            //qant.eulerAngles = new Vector3(90.0f, 180.0f, 0.0f);
+            //Vector3 ppos = Camera.main.transform.position;
+            //ppos.z *= -1;
+            //Camera.main.transform.position = ppos;
         }
         s_localPlayer = this;
-        Camera.main.transform.rotation = qant;
+        //Camera.main.transform.rotation = qant;
     }
 
     static public List<Player> players = new List<Player>();

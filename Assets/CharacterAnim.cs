@@ -14,11 +14,30 @@ public class CharacterAnim : MonoBehaviour {
     
     [SerializeField]
     public float s, c;
+
+    [SerializeField]
+    RuntimeAnimatorController you;
+    [SerializeField]
+    RuntimeAnimatorController notYou;
+
     // Use this for initialization
     void Start ()
     {
         
         animator = GetComponent<Animator>();
+        var collector = GetComponentInParent<Collector>();
+        if(collector != null)
+        {
+            if (collector.playerNum == Player.s_localPlayer.pos)
+            {
+                animator.runtimeAnimatorController = you;
+            }
+            else
+            {
+                animator.runtimeAnimatorController = notYou;
+            }
+        }
+        
         previousDirection = animator.GetInteger("Direction");
         initRot = transform.rotation;
     }
@@ -29,6 +48,8 @@ public class CharacterAnim : MonoBehaviour {
         West = 2,
         East = 3
     };
+
+    
 
     static string[] StateNames = new string[] { "N","S","W","E"}; 
 	// Update is called once per frame

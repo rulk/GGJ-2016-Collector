@@ -20,7 +20,7 @@ public class Collector : NetworkBehaviour
     Transform homeEmitter;
 
     [SerializeField]
-    int playerNum;
+    public int playerNum;
 
     [SyncVar]
     public float hp;
